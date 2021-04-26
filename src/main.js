@@ -4,6 +4,7 @@ let config = {
     type: Phaser.CANVAS,
     width: 640,
     height : 480, 
+    backgroundColor: "#00ffff",
     physics: {
         default: 'arcade',
         arcade: {
@@ -17,9 +18,6 @@ let config = {
 // Configure the game to the specs 
 
 let game = new Phaser.Game(config);
-
-let borderUISize = game.config.height / 30;
-let borderPadding = borderUISize / 3;
 
 // reserve key bindings
 
