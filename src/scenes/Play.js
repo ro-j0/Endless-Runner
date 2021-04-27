@@ -1,4 +1,5 @@
 class Play extends Phaser.Scene {
+
     constructor() {
         super("playScene");
     }
@@ -15,7 +16,16 @@ class Play extends Phaser.Scene {
         // Create Player
         this.player = new Player(this, 100, 380, 'player').setOrigin(0,0);
 
+        //this.ground.setCollisionByExclusion([-1]);
 
+        // this.physics.world.bounds.width = this.ground.width;
+        // this.physics.world.bounds.height = this.ground.height;
+
+        this.physics.add.existing(this.ground);
+        this.ground.body.immovable = true;
+        this.ground.body.moves = false;
+
+        this.physics.add.collider(this.ground, this.player);
 
         // Create key bindings
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
@@ -27,4 +37,6 @@ class Play extends Phaser.Scene {
         // Update the player
         this.player.update();
     }
+
+    
 }

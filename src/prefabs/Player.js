@@ -4,10 +4,14 @@ class Player extends Phaser.GameObjects.Sprite {
 
         // add object to scene
         scene.add.existing(this);
+
+        // enable physics
+        scene.physics.add.existing(this);
+
         this.jumpTime = 1000;
         this.moveSpeed = 5;
     }
-
+    
     update() {
         // Player movement
 
@@ -22,6 +26,13 @@ class Player extends Phaser.GameObjects.Sprite {
             console.log("Game Over");
         }
 
+        if (this.jumpTime <= 0)
+        {
+            this.body.setVelocityY(-300); // jump up
+            this.jumpTime = 1000;
+        }
+
+        this.jumpTime = this.jumpTime - 5;
 
     }
 }
