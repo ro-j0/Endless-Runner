@@ -12,9 +12,10 @@ class Play extends Phaser.Scene {
 
     create() {
         // Create ground
-        this.ground = this.add.rectangle(320, 480, 640, 100, 0x00FF00);
+        //this.ground = this.add.rectangle(320, 480, 640, 100, 0x00FF00);
+        this.ground = this.add.rectangle(320, 480, 840, 100, 0x00FF00);
         // Create Player
-        this.player = new Player(this, 100, 380, 'player').setOrigin(0,0);
+        this.player = new Player(this, 100, game.config.height - this.ground.height, 'player').setOrigin(0.5,0);
 
         //this.ground.setCollisionByExclusion([-1]);
 
@@ -25,9 +26,10 @@ class Play extends Phaser.Scene {
         this.ground.body.immovable = true;
         this.ground.body.moves = false;
 
-        this.obstacle = new Obstacle(this, 700, 100, 'obstacle').setOrigin(0,0);
+        this.obstacles = [];
+        //this.obstacle = new Obstacle(this, 700, 340, 'obstacle').setOrigin(0.5,0);
 
-        this.spawnRate = 1000;
+        this.spawnTimer = 0;
 
         this.physics.add.collider(this.ground, this.player);
 
@@ -35,21 +37,76 @@ class Play extends Phaser.Scene {
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 
+        this.difficulty = 0;
+        this.score = 0;
+        
+        // Time between obstacle spawns (ms)
+        this.SPAWN_RATE = 1000;
+
+        // Create the first obstacle
+        let obstacle = new Obstacle(this, 660, this.ground.y - this.ground.height, 'obstacle', 0, 150, 0);
+        this.obstacles.push(obstacle);
+        this.physics.add.collider(this.player, obstacle);
+
+        // Create Score UI
+        let scoreConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'right',
+            padding: {
+            top: 5,
+            bottom: 5,
+            }
+        }
+        this.scoreLeft = this.add.text(20 , 20, this.score+" seconds", scoreConfig);
+
     }
 
-    update() {
+    update(speed, delta) {
         // Update the player
         this.player.update();
-        if(this.spawnRate <= 0){
-            this.obstacle = new Obstacle(this, 560, 340, 'obstacle').setOrigin(0,0);
-            this.physics.add.collider(this.ground, this.obstacle);
-            this.physics.add.collider(this.player, this.obstacle);
-            this.spawnRate = 1000;
+
+        // Increase score by time since last frame
+        this.increaseScore(delta);
+
+        // Increase Timer variable by time since last frame
+        this.spawnTimer += delta;
+
+        // Check if the player is dead
+        if (this.player.x <= 0){
+            this.gameOver();
         }
-        this.obstacle.update();
-        this.spawnRate = this.spawnRate - 2.5;
+
+        // Check if we should spawn an obstacle
+        if(this.spawnTimer >= this.SPAWN_RATE){
+            this.spawnObstacle();
+            this.spawnTimer = 0;
+        }
+        
+        let idx;
+        for (idx = 0; idx < this.obstacles.length; idx++){
+            this.obstacles[idx].update();
+        }
+        
 
     }
 
-    
+    spawnObstacle(){
+        let obstacle = new Obstacle(this, 660, this.ground.y - this.ground.height, 'obstacle', 0, 150, this.obstacles[this.obstacles.length-1].scaleY);
+        this.obstacles.push(obstacle);
+        this.physics.add.collider(this.player, obstacle);
+    }
+
+    increaseScore(delta){
+        this.score += delta;
+        this.scoreLeft.text = Math.round(this.score/1000) + " seconds"; 
+    }
+
+    gameOver(){
+        this.registry.destroy(); // destroy registry
+        this.events.off(); // disable all active events
+        this.scene.restart(); // restart current scene
+    }
 }
