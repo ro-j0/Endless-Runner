@@ -25,6 +25,10 @@ class Play extends Phaser.Scene {
         this.ground.body.immovable = true;
         this.ground.body.moves = false;
 
+        this.obstacle = new Obstacle(this, 700, 100, 'obstacle').setOrigin(0,0);
+
+        this.spawnRate = 1000;
+
         this.physics.add.collider(this.ground, this.player);
 
         // Create key bindings
@@ -36,6 +40,15 @@ class Play extends Phaser.Scene {
     update() {
         // Update the player
         this.player.update();
+        if(this.spawnRate <= 0){
+            this.obstacle = new Obstacle(this, 560, 340, 'obstacle').setOrigin(0,0);
+            this.physics.add.collider(this.ground, this.obstacle);
+            this.physics.add.collider(this.player, this.obstacle);
+            this.spawnRate = 1000;
+        }
+        this.obstacle.update();
+        this.spawnRate = this.spawnRate - 2.5;
+
     }
 
     
