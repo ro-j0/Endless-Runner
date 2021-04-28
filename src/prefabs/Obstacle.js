@@ -47,8 +47,8 @@ class Obstacle extends Phaser.GameObjects.Sprite  {
             }
         }
         
-        console.log();
-        console.log("previous height: " + prevScale+ ", this scale: " + this.scaleY + "\n");
+        //console.log();
+        //console.log("previous height: " + prevScale+ ", this scale: " + this.scaleY + "\n");
 
         
     }
