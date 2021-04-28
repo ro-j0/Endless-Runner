@@ -11,10 +11,10 @@ class Player extends Phaser.GameObjects.Sprite {
 
         this.jumpTime = 0;
         this.moveSpeed = 200;
-        this.JUMP_RATE = 500;
+        this.JUMP_RATE = 1500;
     }
     
-    update() {
+    update(delta) {
         // Player movement
 
         if(keyLEFT.isDown && this.x >= 0) {
@@ -25,19 +25,13 @@ class Player extends Phaser.GameObjects.Sprite {
             this.body.velocity.x = 0;
         }
 
-        // Check for bounds and game over
-        // if(this.x <= 0){
-        //     console.log("Game Over");
-        // }
-
         if (this.jumpTime <= 0)
         {
             this.body.setVelocityY(-300); // jump up
             this.jumpTime = this.JUMP_RATE;
         }
 
-        this.jumpTime = this.jumpTime - 5;
-
+        this.jumpTime -= delta;
     }
 
     setJumpRate(value){

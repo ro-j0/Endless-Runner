@@ -86,7 +86,7 @@ class Play extends Phaser.Scene {
     update(speed, delta) {
         
         // Update the player
-        this.player.update();
+        this.player.update(delta);
 
         // Increase score by time since last frame
         this.increaseScore(delta);
