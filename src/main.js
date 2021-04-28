@@ -1,10 +1,10 @@
 // Configure the specs for the game canvas
 
 let config = {
-    type: Phaser.CANVAS,
+    type: Phaser.WEBGL,
     width: 640,
     height : 480, 
-    backgroundColor: "#00ffff",
+    backgroundColor: "#ffffff",
     physics: {
         default: 'arcade',
         arcade: {

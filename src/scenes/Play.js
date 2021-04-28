@@ -8,18 +8,39 @@ class Play extends Phaser.Scene {
         // Load sprites
         this.load.image('player', './assets/Player.png');
         this.load.image('obstacle', './assets/Obstacle.png');
+        this.load.image('backdrop', './assets/backdrop.png');
     }
 
     create() {
+        // Create backdrop
+        this.sky = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'backdrop').setOrigin(0, 0);
+        this.scrollSpeed = 0.05;
+        //this.sky.setTint("0x00FF00");
+
+        // Set the three tint colors we are going to shift to and from
+        // const firstColor = Phaser.Display.Color.ValueToColor(0x42d6af);
+        // const secondColor = Phaser.Display.Color.ValueToColor(0xd64de8);
+        // const thirdColor = Phaser.Display.Color.ValueToColor(0xe8af4d);
+
+        // this.tweens.addCounter({
+        //     from: 0,
+        //     to: 100,
+        //     duration: 5000,
+        //     ease: Phaser.Math.Easing.Sine.Inout,
+
+        // })
+
         // Create ground
-        this.ground = this.add.rectangle(320, 480, 840, 100, 0xFF0000);
+        this.ground = this.add.rectangle(320, 480, 640, 100, 0xFF0000);
 
         // Create Player
-        this.player = new Player(this, game.config.width/2, game.config.height - this.ground.height - 100, 'player').setOrigin(0.5,0);
+        this.player = new Player(this, game.config.width/2, this.ground.y - this.ground.height - 40, 'player').setOrigin(0.5,1);
+        this.player.body.Set
 
         //this.ground.setCollisionByExclusion([-1]);
-        // this.physics.world.bounds.width = this.ground.width;
-        // this.physics.world.bounds.height = this.ground.height;
+        this.physics.world.bounds.width = this.ground.width;
+        //this.physics.world.bounds.height = this.ground.height;
+        this.player.body.setCollideWorldBounds(true);
 
         this.physics.add.existing(this.ground);
         this.ground.body.immovable = true;
@@ -81,6 +102,11 @@ class Play extends Phaser.Scene {
         }
         this.scoreLeft = this.add.text(20 , 20, this.score+" seconds", scoreConfig);
 
+
+        this.DoubleJumpGroup = this.game.add.group();
+        //this.DoubleJumpGroup.add(sprite1);
+
+
     }
 
     update(speed, delta) {
@@ -98,7 +124,7 @@ class Play extends Phaser.Scene {
         this.spawnTimer += delta;
 
         // Check if the player is dead
-        if (this.player.x <= 0 || this.player.y >= game.config.height - this.ground.height){
+        if (this.player.x <= 0 || this.player.y >= game.config.height - 50){
             this.gameOver();
         }
 
@@ -113,6 +139,7 @@ class Play extends Phaser.Scene {
             this.obstacles[idx].update();
         }
         
+        this.sky.tilePositionX += this.scrollSpeed*delta;
 
     }
 
