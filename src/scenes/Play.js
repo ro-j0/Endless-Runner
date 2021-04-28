@@ -135,15 +135,15 @@ class Play extends Phaser.Scene {
             this.SPAWN_RATE = 600;
             // let idx;
             // for (idx = 0; idx < this.obstacles.length; idx++){
-            //     this.obstacles[idx].body.velocity.x = -this.currentSpeed;
+            //      this.obstacles[idx].body.velocity.x = -this.currentSpeed;
             // }
         } else if (this.score >= this.MEDIUM_THRESHOLD && this.difficulty < 1){
             this.difficulty = 1;
             this.currentSpeed = 200;
             this.SPAWN_RATE = 800;
-            //let idx;
+            // let idx;
             // for (idx = 0; idx < this.obstacles.length; idx++){
-            //     this.obstacles[idx].body.velocity.x = -this.currentSpeed;
+            //      this.obstacles[idx].body.velocity.x = -this.currentSpeed;
             // }
         }
     }
