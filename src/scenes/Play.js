@@ -12,13 +12,12 @@ class Play extends Phaser.Scene {
 
     create() {
         // Create ground
-        this.ground = this.add.rectangle(320, 480, 840, 100, 0x00FF00);
+        this.ground = this.add.rectangle(320, 480, 840, 100, 0xFF0000);
 
         // Create Player
-        this.player = new Player(this, 100, game.config.height - this.ground.height, 'player').setOrigin(0.5,0);
+        this.player = new Player(this, game.config.width/2, game.config.height - this.ground.height - 100, 'player').setOrigin(0.5,0);
 
         //this.ground.setCollisionByExclusion([-1]);
-
         // this.physics.world.bounds.width = this.ground.width;
         // this.physics.world.bounds.height = this.ground.height;
 
@@ -44,23 +43,27 @@ class Play extends Phaser.Scene {
         this.currentSpeed = 150;
 
         // Time between obstacle spawns (ms)
-        this.SPAWN_RATE = 1000;
+        this.SPAWN_RATE = 1500;
+
+        // Column Width
+        this.columnWidth = 3;
         
         // Keeps track of time alive
         this.score = 0;
-        
-        // EASY (0:00-0:30): speed = 150, rate = 1000
 
-        // MEDIUM (0:30-0:59): speed: 200, rate = 800
+        
+        // EASY (0:00-0:30): speed = 150, rate = 1500, width = 3
+
+        // MEDIUM (0:30-0:59): speed: 200, rate = 1000, width = 2
         this.MEDIUM_THRESHOLD = 30000;
 
-        // HARD (1:00-INF): speed = 250, rate = 600
+        // HARD (1:00-INF): speed = 250, rate = 600, width = 1.2
         this.HARD_THRESHOLD = 60000;
         
         
 
         // Create the first obstacle
-        let obstacle = new Obstacle(this, 660, this.ground.y - this.ground.height, 'obstacle', 0, this.currentSpeed, 0);
+        let obstacle = new Obstacle(this, 0, this.ground.y - this.ground.height, 'obstacle', 0, this.currentSpeed, 0, 24);
         this.obstacles.push(obstacle);
         this.physics.add.collider(this.player, obstacle);
 
@@ -95,7 +98,7 @@ class Play extends Phaser.Scene {
         this.spawnTimer += delta;
 
         // Check if the player is dead
-        if (this.player.x <= 0){
+        if (this.player.x <= 0 || this.player.y >= game.config.height - this.ground.height){
             this.gameOver();
         }
 
@@ -114,7 +117,7 @@ class Play extends Phaser.Scene {
     }
 
     spawnObstacle(){
-        let obstacle = new Obstacle(this, 660, this.ground.y - this.ground.height, 'obstacle', 0, this.currentSpeed, this.obstacles[this.obstacles.length-1].scaleY);
+        let obstacle = new Obstacle(this, 660, this.ground.y - this.ground.height, 'obstacle', 0, this.currentSpeed, this.obstacles[this.obstacles.length-1].scaleY, this.columnWidth);
         this.obstacles.push(obstacle);
         this.physics.add.collider(this.player, obstacle);
     }
@@ -133,6 +136,7 @@ class Play extends Phaser.Scene {
             this.difficulty = 2;
             this.currentSpeed = 250;
             this.SPAWN_RATE = 600;
+            this.columnWidth = 1.2;
             // let idx;
             // for (idx = 0; idx < this.obstacles.length; idx++){
             //      this.obstacles[idx].body.velocity.x = -this.currentSpeed;
@@ -141,6 +145,7 @@ class Play extends Phaser.Scene {
             this.difficulty = 1;
             this.currentSpeed = 200;
             this.SPAWN_RATE = 800;
+            this.columnWidth = 2;
             // let idx;
             // for (idx = 0; idx < this.obstacles.length; idx++){
             //      this.obstacles[idx].body.velocity.x = -this.currentSpeed;

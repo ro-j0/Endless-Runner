@@ -1,5 +1,5 @@
 class Obstacle extends Phaser.GameObjects.Sprite  {
-    constructor(scene, x, y, texture, frame, speed, prevScale) {
+    constructor(scene, x, y, texture, frame, speed, prevScale, scaleWidth) {
         super(scene, x, y, texture, frame);
 
         // add object to scene
@@ -18,6 +18,8 @@ class Obstacle extends Phaser.GameObjects.Sprite  {
         this.y = game.config.height - 50;
         this.setOrigin(0, 1);
 
+        this.scaleX = scaleWidth;
+
         // Handle first obstacle spawn: always the same height
         if (prevScale == 0){
             this.scaleY = 1.2;
@@ -26,7 +28,7 @@ class Obstacle extends Phaser.GameObjects.Sprite  {
 
         // Randomize height of the following obstacles based on previous height
         let RNG = Math.random();
-        if (RNG <= 0.25){
+        if (RNG <= 0.4){
             // Reduce obstacle height
             if (prevScale <= 1.9){
                 this.scaleY = 1.2;
@@ -46,6 +48,8 @@ class Obstacle extends Phaser.GameObjects.Sprite  {
                 this.scaleY = prevScale + 0.4;
             }
         }
+
+        
         
         //console.log();
         //console.log("previous height: " + prevScale+ ", this scale: " + this.scaleY + "\n");
@@ -58,7 +62,7 @@ class Obstacle extends Phaser.GameObjects.Sprite  {
         //this.x -= this.moveSpeed;
 
         // Despawn if reaching the left side of the screen
-        if(this.x <= -this.width){
+        if(this.x <= -this.width * this.scaleX){
             this.destroy();
         }
     }
