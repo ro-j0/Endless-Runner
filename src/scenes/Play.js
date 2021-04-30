@@ -103,7 +103,7 @@ class Play extends Phaser.Scene {
         this.scoreLeft = this.add.text(20 , 20, this.score+" seconds", scoreConfig);
 
 
-        this.DoubleJumpGroup = this.game.add.group();
+        //this.DoubleJumpGroup = this.game.add.group();
         //this.DoubleJumpGroup.add(sprite1);
 
 
