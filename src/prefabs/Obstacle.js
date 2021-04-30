@@ -15,7 +15,7 @@ class Obstacle extends Phaser.GameObjects.Sprite  {
 
         // Set up transforms so that the base is touching the ground, and scaling
         // Y does not affect location of the base
-        this.y = game.config.height - 50;
+        this.y = game.config.height;
         this.setOrigin(0, 1);
 
         this.scaleX = scaleWidth;

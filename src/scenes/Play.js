@@ -6,15 +6,28 @@ class Play extends Phaser.Scene {
 
     preload() {
         // Load sprites
-        this.load.image('player', './assets/Player.png');
         this.load.image('obstacle', './assets/Obstacle.png');
-        this.load.image('backdrop', './assets/backdrop.png');
+        this.load.image('backLayer1', './assets/hill2.png');
+        this.load.image('backLayer2', './assets/hill1.png');
+        this.load.image('backLayer3', './assets/trees4.png');
+        this.load.image('backLayer4', './assets/trees3.png');
+        this.load.image('backLayer5', './assets/trees2.png');
+        this.load.image('backLayer6', './assets/trees1.png');
+        this.load.image('backLayer7', './assets/clouds_mountains.png');
+        this.load.atlas('spriteSheet', './assets/spritesheet.png', 'assets/spritesheet.json');
     }
 
     create() {
         // Create backdrop
-        this.sky = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'backdrop').setOrigin(0, 0);
-        this.scrollSpeed = 0.05;
+        this.back7 = this.add.tileSprite(0, game.config.height-350, this.textures.get('backLayer7').width, this.textures.get('backLayer7').height, 'backLayer7').setOrigin(0, 0);
+        this.back6 = this.add.tileSprite(0, game.config.height-70, this.textures.get('backLayer6').width, this.textures.get('backLayer6').height, 'backLayer6').setOrigin(0, 1);
+        this.back5 = this.add.tileSprite(0, game.config.height-90, this.textures.get('backLayer5').width, this.textures.get('backLayer5').height, 'backLayer5').setOrigin(0, 1);
+        this.back4 = this.add.tileSprite(0, game.config.height-40, this.textures.get('backLayer4').width, this.textures.get('backLayer4').height, 'backLayer4').setOrigin(0, 1);
+        this.back3 = this.add.tileSprite(0, game.config.height-30, this.textures.get('backLayer3').width, this.textures.get('backLayer3').height, 'backLayer3').setOrigin(0, 1);
+        this.back2 = this.add.tileSprite(0, game.config.height, this.textures.get('backLayer2').width, this.textures.get('backLayer2').height, 'backLayer2').setOrigin(0, 1);
+        this.back1 = this.add.tileSprite(0, game.config.height, this.textures.get('backLayer1').width, this.textures.get('backLayer1').height, 'backLayer1').setOrigin(0, 1);
+        
+        this.scrollSpeeds = [0.1, 0.08, 0.07, 0.05, 0.03, 0.02, 0.01];
         //this.sky.setTint("0x00FF00");
 
         // Set the three tint colors we are going to shift to and from
@@ -31,27 +44,27 @@ class Play extends Phaser.Scene {
         // })
 
         // Create ground
-        this.ground = this.add.rectangle(320, 480, 640, 100, 0xFF0000);
+        //this.ground = this.add.rectangle(320, 480, 640, 100, 0xFF0000);
 
         // Create Player
-        this.player = new Player(this, game.config.width/2, this.ground.y - this.ground.height - 40, 'player').setOrigin(0.5,1);
-        this.player.body.Set
+        this.player = new Player(this, game.config.width/2, game.config.height - 240, 'spriteSheet').setOrigin(0.5,1);
+        
 
         //this.ground.setCollisionByExclusion([-1]);
-        this.physics.world.bounds.width = this.ground.width;
+        this.physics.world.bounds.width = game.config.width;
         //this.physics.world.bounds.height = this.ground.height;
-        this.player.body.setCollideWorldBounds(true);
+        //this.player.body.setCollideWorldBounds(true);
 
-        this.physics.add.existing(this.ground);
-        this.ground.body.immovable = true;
-        this.ground.body.moves = false;
+        //this.physics.add.existing(this.ground);
+        //this.ground.body.immovable = true;
+        //this.ground.body.moves = false;
 
         this.obstacles = [];
         //this.obstacle = new Obstacle(this, 700, 340, 'obstacle').setOrigin(0.5,0);
 
         this.spawnTimer = 0;
 
-        this.physics.add.collider(this.ground, this.player);
+        //this.physics.add.collider(this.ground, this.player);
 
         // Create key bindings
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
@@ -84,7 +97,7 @@ class Play extends Phaser.Scene {
         
 
         // Create the first obstacle
-        let obstacle = new Obstacle(this, 0, this.ground.y - this.ground.height, 'obstacle', 0, this.currentSpeed, 0, 24);
+        let obstacle = new Obstacle(this, 0, game.config.height, 'obstacle', 0, this.currentSpeed, 0, 24);
         this.obstacles.push(obstacle);
         this.physics.add.collider(this.player, obstacle);
 
@@ -124,7 +137,7 @@ class Play extends Phaser.Scene {
         this.spawnTimer += delta;
 
         // Check if the player is dead
-        if (this.player.x <= 0 || this.player.y >= game.config.height - 50){
+        if (this.player.x <= 0 || this.player.y >= game.config.height + this.player.height){
             this.gameOver();
         }
 
@@ -138,13 +151,13 @@ class Play extends Phaser.Scene {
         for (idx = 0; idx < this.obstacles.length; idx++){
             this.obstacles[idx].update();
         }
-        
-        this.sky.tilePositionX += this.scrollSpeed*delta;
+
+        this.ScrollBackground(delta);
 
     }
 
     spawnObstacle(){
-        let obstacle = new Obstacle(this, 660, this.ground.y - this.ground.height, 'obstacle', 0, this.currentSpeed, this.obstacles[this.obstacles.length-1].scaleY, this.columnWidth);
+        let obstacle = new Obstacle(this, 660, game.config.height, 'obstacle', 0, this.currentSpeed, this.obstacles[this.obstacles.length-1].scaleY, this.columnWidth);
         this.obstacles.push(obstacle);
         this.physics.add.collider(this.player, obstacle);
     }
@@ -184,5 +197,15 @@ class Play extends Phaser.Scene {
         this.registry.destroy(); // destroy registry
         this.events.off(); // disable all active events
         this.scene.restart(); // restart current scene
+    }
+
+    ScrollBackground(delta){
+        this.back1.tilePositionX += this.scrollSpeeds[0]*delta;
+        this.back2.tilePositionX += this.scrollSpeeds[1]*delta;
+        this.back3.tilePositionX += this.scrollSpeeds[2]*delta;
+        this.back4.tilePositionX += this.scrollSpeeds[3]*delta;
+        this.back5.tilePositionX += this.scrollSpeeds[4]*delta;
+        this.back6.tilePositionX += this.scrollSpeeds[5]*delta;
+        this.back7.tilePositionX += this.scrollSpeeds[6]*delta;
     }
 }

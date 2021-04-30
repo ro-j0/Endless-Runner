@@ -4,7 +4,7 @@ let config = {
     type: Phaser.WEBGL,
     width: 640,
     height : 480, 
-    backgroundColor: "#ffffff",
+    backgroundColor: "#8aa179",
     physics: {
         default: 'arcade',
         arcade: {
@@ -12,7 +12,7 @@ let config = {
             gravity: { y: 500 }
         }
     },
-    scene: [Play]
+    scene: [Play],
 }
 
 // Configure the game to the specs 

@@ -9,11 +9,36 @@ class Player extends Phaser.GameObjects.Sprite {
         // enable physics
         scene.physics.add.existing(this);
 
+        this.anims.create({
+            key: 'flying', 
+            repeat: -1,
+            frames: this.anims.generateFrameNames('spriteSheet', {
+                prefix: 'fly',
+                start: 1,
+                end: 6,
+            }),
+            framerate: 10
+        });
+        this.anims.create({
+            key: 'hopping', 
+            repeat: -1,
+            frames: this.anims.generateFrameNames('spriteSheet', {
+                prefix: 'hop',
+                start: 1,
+                end: 6,
+            }),
+            framerate: 10
+        });
+        this.anims.play('hopping');
+
         
         this.moveSpeed = 200;
         this.jumpHeight = 300;
         this.JUMP_RATE = 1500;
         this.jumpTime = this.JUMP_RATE/2;
+
+        this.scaleX = 2;
+        this.scaleY = 2;
         
         // Duration of squish animation prior to jump
         this.SQUISH_DURATION = 250;
@@ -34,10 +59,13 @@ class Player extends Phaser.GameObjects.Sprite {
             
         if(keyLEFT.isDown && this.x >= 0) {
             this.body.velocity.x = -this.moveSpeed;
+            this.flipX = true;
         } else if (keyRIGHT.isDown && this.x <= game.config.width - this.width) {
             this.body.velocity.x = this.moveSpeed;
+            this.flipX = false;
         } else {
             this.body.velocity.x = 0;
+            this.flipX = false;
         }
 
         
@@ -59,10 +87,12 @@ class Player extends Phaser.GameObjects.Sprite {
 
     Jump(){
         //this.jumping = true;
-        console.log("jump called.");
+        //console.log("jump called.");
         this.indicateJump();
+        this.anims.play('hopping');
         this.clock = this.scene.time.delayedCall(this.SQUISH_DURATION-1, () => {
             this.body.setVelocityY(-this.jumpHeight);   // jump up
+            this.anims.play('flying');
             this.jumping = false;
         }, null, this);
         
@@ -77,7 +107,7 @@ class Player extends Phaser.GameObjects.Sprite {
         //this.hasSquished = true;
         this.scene.tweens.add({
             targets     : this,
-            scaleY: 0.7,
+            scaleY: 1.5,
             ease        : Phaser.Math.Easing.Sine.Inout,
             duration    : this.SQUISH_DURATION/2,
             yoyo        : true,
