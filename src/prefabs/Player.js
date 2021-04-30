@@ -52,45 +52,33 @@ class Player extends Phaser.GameObjects.Sprite {
     update(delta) {
         // Player movement
 
-        if (!this.jumping && this.body.touching.down){
-            this.jumping = true;
-            this.Jump();
-        }
-            
-        if(keyLEFT.isDown && this.x >= 0) {
-            this.body.velocity.x = -this.moveSpeed;
-            this.flipX = true;
-        } else if (keyRIGHT.isDown && this.x <= game.config.width - this.width) {
-            this.body.velocity.x = this.moveSpeed;
-            this.flipX = false;
+        if (!this.jumping){
+            if (this.body.touching.down){
+                this.jumping = true;
+                this.Jump(); 
+            }
+            if(keyLEFT.isDown && this.x >= 0) {
+                this.body.velocity.x = -this.moveSpeed;
+                this.flipX = true;
+            } else if (keyRIGHT.isDown && this.x <= game.config.width - this.width) {
+                this.body.velocity.x = this.moveSpeed;
+                this.flipX = false;
+            } else {
+                this.body.velocity.x = 0;
+                this.flipX = false;
+            }
         } else {
             this.body.velocity.x = 0;
-            this.flipX = false;
+            this.flipX = false;   
         }
-
-        
-
-        // if (this.jumpTime <= 0)
-        // {
-        //     this.Jump();
-        //     this.hasSquished = false;       // Reset animation flag
-        //     this.jumpTime = this.JUMP_RATE; // Reset jump timer
-        // }
-        // if (this.jumpTime <= this.SQUISH_DURATION && !this.hasSquished){
-        //     this.indicateJump();
-        // }
-
-        // this.jumpTime -= delta;
     }
 
     
 
     Jump(){
-        //this.jumping = true;
-        //console.log("jump called.");
         this.indicateJump();
         this.anims.play('hopping');
-        this.clock = this.scene.time.delayedCall(this.SQUISH_DURATION-1, () => {
+        this.clock = this.scene.time.delayedCall(this.SQUISH_DURATION-2, () => {
             this.body.setVelocityY(-this.jumpHeight);   // jump up
             this.anims.play('flying');
             this.jumping = false;
@@ -104,10 +92,9 @@ class Player extends Phaser.GameObjects.Sprite {
     }
 
     indicateJump(){
-        //this.hasSquished = true;
         this.scene.tweens.add({
             targets     : this,
-            scaleY: 1.5,
+            scaleY: 1,
             ease        : Phaser.Math.Easing.Sine.Inout,
             duration    : this.SQUISH_DURATION/2,
             yoyo        : true,
