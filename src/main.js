@@ -12,7 +12,7 @@ let config = {
             gravity: { y: 500 }
         }
     },
-    scene: [Play],
+    scene: [Menu, Play],
 }
 
 // Configure the game to the specs 
@@ -22,3 +22,12 @@ let game = new Phaser.Game(config);
 // reserve key bindings
 
 let keyLEFT, keyRIGHT;
+
+function loadFont(name, url) {
+    var newFont = new FontFace(name, `url(${url})`);
+    newFont.load().then(function (loaded) {
+        document.fonts.add(loaded);
+    }).catch(function (error) {
+        return error;
+    });
+}

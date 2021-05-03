@@ -6,7 +6,9 @@ class Play extends Phaser.Scene {
 
     preload() {
         // Load sprites
-        this.load.image('obstacle', './assets/pillar1.png');
+        this.load.image('obstacle1', './assets/pillar1.png');
+        this.load.image('obstacle2', './assets/pillar2.png');
+        this.load.image('obstacle3', './assets/pillar3.png');
         this.load.image('backLayer1', './assets/hill2.png');
         this.load.image('backLayer2', './assets/hill1.png');
         this.load.image('backLayer3', './assets/trees4.png');
@@ -38,6 +40,9 @@ class Play extends Phaser.Scene {
         
         // Obstacle array, stores each obstacle that is shown on screen
         this.obstacles = [];
+
+        // Keeps track of current obstacle sprite
+        this.obstacleSprite = 'obstacle1';
 
         // Timer to keep track of when it's time to spawn another obstacle
         this.spawnTimer = 0;
@@ -74,17 +79,16 @@ class Play extends Phaser.Scene {
         let ob_idx;
         for (ob_idx = 0; ob_idx < 10; ob_idx++){
             // {72 * ob_idx} is hard coded; should be {obstacle.width * 3 * ob_idx}
-            let obstacle = new Obstacle(this, 72*ob_idx, game.config.height, 'obstacle', 0, this.currentSpeed, 0, 3);
+            let obstacle = new Obstacle(this, 72*ob_idx, game.config.height, this.obstacleSprite, 0, this.currentSpeed, 0, 3);
             this.obstacles.push(obstacle);
             this.physics.add.collider(this.player, obstacle);
         }
 
         // Create Score UI
         let scoreConfig = {
-            fontFamily: 'Courier',
-            fontSize: '28px',
-            backgroundColor: '#F3B141',
-            color: '#843605',
+            fontFamily: 'chuck',
+            fontSize: '56px',
+            color: '#faf5c8',
             align: 'right',
             padding: {
             top: 5,
@@ -93,7 +97,7 @@ class Play extends Phaser.Scene {
         }
         
         // Add UI Element to the screen
-        this.scoreLeft = this.add.text(20 , 20, this.score+" seconds", scoreConfig);
+        this.scoreLeft = this.add.text(20 , 20, this.score, scoreConfig);
     }
 
     update(speed, delta) {
@@ -134,7 +138,7 @@ class Play extends Phaser.Scene {
 
     // Adds obstacle to the game - collides with player, reachable via the obstacles[] array
     spawnObstacle(){
-        let obstacle = new Obstacle(this, 660, game.config.height, 'obstacle', 0, this.currentSpeed, this.obstacles[this.obstacles.length-1].scaleY, this.columnWidth);
+        let obstacle = new Obstacle(this, 660, game.config.height, this.obstacleSprite, 0, this.currentSpeed, this.obstacles[this.obstacles.length-1].scaleY, this.columnWidth);
         this.obstacles.push(obstacle);
         this.physics.add.collider(this.player, obstacle);
     }
@@ -142,7 +146,7 @@ class Play extends Phaser.Scene {
     // Adds time to the score independent of frame rate
     increaseScore(delta){
         this.score += delta;
-        this.scoreLeft.text = Math.round(this.score/1000) + " seconds"; 
+        this.scoreLeft.text = Math.round(this.score/100)/10; 
     }
 
     // changes pillar spawn speed, velocity, and width based on score
@@ -156,11 +160,13 @@ class Play extends Phaser.Scene {
             this.currentSpeed = 250;
             this.SPAWN_RATE = 600;
             this.columnWidth = 1.2;
+            this.obstacleSprite = "obstacle3";
         } else if (this.score >= this.MEDIUM_THRESHOLD && this.difficulty < 1){
             this.difficulty = 1;
             this.currentSpeed = 200;
             this.SPAWN_RATE = 800;
             this.columnWidth = 2;
+            this.obstacleSprite = "obstacle2";
         }
     }
 
@@ -179,4 +185,6 @@ class Play extends Phaser.Scene {
         this.back6.tilePositionX += this.scrollSpeeds[5]*delta;
         this.back7.tilePositionX += this.scrollSpeeds[6]*delta;
     }
+
+    
 }
