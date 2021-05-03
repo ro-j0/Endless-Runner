@@ -47,6 +47,9 @@ class Play extends Phaser.Scene {
         // Timer to keep track of when it's time to spawn another obstacle
         this.spawnTimer = 0;
 
+        // Flag to stop updating game elements when player dies
+        this.gameEnded = false;
+
 
         // Create key bindings
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
@@ -84,6 +87,8 @@ class Play extends Phaser.Scene {
             this.physics.add.collider(this.player, obstacle);
         }
 
+        console.log(this.obstacles);
+
         // Create Score UI
         let scoreConfig = {
             fontFamily: 'chuck',
@@ -101,7 +106,9 @@ class Play extends Phaser.Scene {
     }
 
     update(speed, delta) {
-        
+        // Do nothing if the game is over
+        if (this.gameEnded){return;}
+
         // Update the player
         this.player.update(delta);
 
@@ -113,11 +120,6 @@ class Play extends Phaser.Scene {
 
         // Increase Timer variable by time since last frame
         this.spawnTimer += delta;
-
-        // Check if the player is dead
-        if (this.player.x <= 0 || this.player.y >= game.config.height + this.player.height){
-            this.gameOver();
-        }
 
         // Check if we should spawn an obstacle
         if(this.spawnTimer >= this.SPAWN_RATE){
@@ -134,6 +136,10 @@ class Play extends Phaser.Scene {
         // Scrolls background elements at varying rates
         this.ScrollBackground(delta);
 
+        // Check if the player is dead
+        if (this.player.x <= 0 || this.player.y >= game.config.height + this.player.height){
+            this.restart();
+        }
     }
 
     // Adds obstacle to the game - collides with player, reachable via the obstacles[] array
@@ -171,6 +177,17 @@ class Play extends Phaser.Scene {
     }
 
     gameOver(){
+        this.gameEnded = true;
+        let idx;
+        for (idx = 1; idx < this.obstacles.length; idx++){
+            console.log(idx);
+            console.log(this.obstacles);
+            console.log(this.obstacles[idx]);
+            this.obstacles[idx].setSpeed(0);
+        }
+    }
+
+    restart(){
         this.registry.destroy(); // destroy registry
         this.events.off(); // disable all active events
         this.scene.restart(); // restart current scene

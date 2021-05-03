@@ -31,7 +31,7 @@ class Obstacle extends Phaser.GameObjects.Sprite  {
         if (RNG <= 0.4){
             // Reduce obstacle height
             if (prevScale <= 1.9){
-                this.scaleY = 1.2;
+                this.scaleY = prevScale + 0.4;
             }
             else{
                 this.scaleY = prevScale - 0.8;
@@ -42,7 +42,7 @@ class Obstacle extends Phaser.GameObjects.Sprite  {
         } else {
             // Increase obstacle height
             if (prevScale >= 3.1){
-                this.scaleY = 3.2;
+                this.scaleY = prevScale - 0.8;
             }
             else{
                 this.scaleY = prevScale + 0.4;
@@ -65,5 +65,9 @@ class Obstacle extends Phaser.GameObjects.Sprite  {
         if(this.x <= -this.width * this.scaleX){
             this.destroy();
         }
+    }
+
+    setSpeed(speed){
+        this.body.velocity.x = -speed;
     }
 }

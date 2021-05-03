@@ -52,7 +52,7 @@ class Menu extends Phaser.Scene {
         this.credits.setInteractive();
         this.credits.on('pointerover', () => { this.enterButtonHoverState(this.credits); });
         this.credits.on('pointerout', () => { this.enterButtonRestState(this.credits); });
-        //this.credits.on('pointerdown', () => {  });
+        this.credits.on('pointerdown', () => { this.scene.start("creditsScene"); });
         
     }
 

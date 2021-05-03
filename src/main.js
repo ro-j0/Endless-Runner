@@ -12,7 +12,7 @@ let config = {
             gravity: { y: 500 }
         }
     },
-    scene: [Menu, Play],
+    scene: [Menu, Credits, Play],
 }
 
 // Configure the game to the specs 
