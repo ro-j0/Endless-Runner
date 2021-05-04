@@ -11,29 +11,42 @@ class Play extends Phaser.Scene {
         this.load.image('obstacle3', './assets/pillar3.png');
         this.load.image('backLayer1', './assets/hill2.png');
         this.load.image('backLayer2', './assets/hill1.png');
-        this.load.image('backLayer3', './assets/trees4.png');
-        this.load.image('backLayer4', './assets/trees3.png');
-        this.load.image('backLayer5', './assets/trees2.png');
-        this.load.image('backLayer6', './assets/trees1.png');
-        this.load.image('backLayer7', './assets/clouds_mountains.png');
+        this.load.image('backLayer3', './assets/tree4.png');
+        this.load.image('backLayer4', './assets/tree3.png');
+        this.load.image('backLayer5', './assets/tree2.png');
+        this.load.image('backLayer6', './assets/tree1.png');
+        this.load.image('backLayer7', './assets/cloudsandmountains.png');
+        
         this.load.atlas('spriteSheet', './assets/spritesheet.png', 'assets/spritesheet.json');
+
+        this.load.audio("music", ["./assets/sounds/music.wav"]);
     }
 
     create() {
         // Create backdrop elements
-        this.back7 = this.add.tileSprite(0, game.config.height-350, this.textures.get('backLayer7').width, this.textures.get('backLayer7').height, 'backLayer7').setOrigin(0, 0);
-        this.back6 = this.add.tileSprite(0, game.config.height-70, this.textures.get('backLayer6').width, this.textures.get('backLayer6').height, 'backLayer6').setOrigin(0, 1);
-        this.back5 = this.add.tileSprite(0, game.config.height-90, this.textures.get('backLayer5').width, this.textures.get('backLayer5').height, 'backLayer5').setOrigin(0, 1);
-        this.back4 = this.add.tileSprite(0, game.config.height-40, this.textures.get('backLayer4').width, this.textures.get('backLayer4').height, 'backLayer4').setOrigin(0, 1);
-        this.back3 = this.add.tileSprite(0, game.config.height-30, this.textures.get('backLayer3').width, this.textures.get('backLayer3').height, 'backLayer3').setOrigin(0, 1);
-        this.back2 = this.add.tileSprite(0, game.config.height, this.textures.get('backLayer2').width, this.textures.get('backLayer2').height, 'backLayer2').setOrigin(0, 1);
+        this.back7 = this.add.tileSprite(game.config.width/2, game.config.height-500, this.textures.get('backLayer7').width*3, this.textures.get('backLayer7').height, 'backLayer7').setOrigin(0.5, 0);
+        this.back7.scaleX = 1.3;
+        this.back7.scaleY = 1.3;
+        this.back6 = this.add.tileSprite(0, game.config.height-180, this.textures.get('backLayer6').width, this.textures.get('backLayer6').height, 'backLayer6').setOrigin(0, 1);
+        this.back5 = this.add.tileSprite(0, game.config.height-210, this.textures.get('backLayer5').width, this.textures.get('backLayer5').height, 'backLayer5').setOrigin(0, 1);
+        this.back4 = this.add.tileSprite(0, game.config.height-120, this.textures.get('backLayer4').width, this.textures.get('backLayer4').height, 'backLayer4').setOrigin(0, 1);
+        this.back3 = this.add.tileSprite(0, game.config.height-90, this.textures.get('backLayer3').width*1.3, this.textures.get('backLayer3').height*1.3, 'backLayer3').setOrigin(0, 1);
+        this.back2 = this.add.tileSprite(0, game.config.height-60, this.textures.get('backLayer2').width*1.3, this.textures.get('backLayer2').height*1.3, 'backLayer2').setOrigin(0, 1);
         this.back1 = this.add.tileSprite(0, game.config.height, this.textures.get('backLayer1').width, this.textures.get('backLayer1').height, 'backLayer1').setOrigin(0, 1);
-        
+        this.back1.scaleX = 1.3;
+        this.back1.scaleY = 1.3;
+
+        // Set sound variables
+        if (!this.music){
+            this.music = this.sound.add("music", {loop: true});
+            this.music.play();
+        }
+
         // Setting scroll speeds for various parallax scrolling elements
-        this.scrollSpeeds = [0.1, 0.08, 0.07, 0.05, 0.03, 0.02, 0.01];
+        this.scrollSpeeds = [0.1, 0.08, 0.07, 0.05, 0.03, 0.01];
 
         // Create Player
-        this.player = new Player(this, game.config.width/2, game.config.height - 240, 'spriteSheet').setOrigin(0.5,1);
+        this.player = new Player(this, game.config.width/4 + 100, game.config.height - 240, 'spriteSheet').setOrigin(0.5,1);
         
         // Set world bounds
         this.physics.world.bounds.width = game.config.width;
@@ -49,6 +62,9 @@ class Play extends Phaser.Scene {
 
         // Flag to stop updating game elements when player dies
         this.gameEnded = false;
+
+        // Flag that pauses game while tutorial is active
+        this.tutorialActive = true;
 
 
         // Create key bindings
@@ -80,9 +96,9 @@ class Play extends Phaser.Scene {
 
         // Create the first obstacles, that form a forgiving platform
         let ob_idx;
-        for (ob_idx = 0; ob_idx < 10; ob_idx++){
+        for (ob_idx = 0; ob_idx < 20; ob_idx++){
             // {72 * ob_idx} is hard coded; should be {obstacle.width * 3 * ob_idx}
-            let obstacle = new Obstacle(this, 72*ob_idx, game.config.height, this.obstacleSprite, 0, this.currentSpeed, 0, 3);
+            let obstacle = new Obstacle(this, game.config.width/2 + 72*(9-ob_idx), game.config.height, this.obstacleSprite, 0, this.currentSpeed, 0, 3);
             this.obstacles.push(obstacle);
             this.physics.add.collider(this.player, obstacle);
         }
@@ -108,6 +124,13 @@ class Play extends Phaser.Scene {
     update(speed, delta) {
         // Do nothing if the game is over
         if (this.gameEnded){return;}
+
+        // if (this.tutorialActive){
+        //     if (this.checkForInput()){
+        //         this.tutorialActive = false;
+        //     }
+        //     return;
+        // }
 
         // Update the player
         this.player.update(delta);
@@ -142,9 +165,17 @@ class Play extends Phaser.Scene {
         }
     }
 
+    checkForInput(){
+        if(keyLEFT.isDown || keyRIGHT.isDown){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // Adds obstacle to the game - collides with player, reachable via the obstacles[] array
     spawnObstacle(){
-        let obstacle = new Obstacle(this, 660, game.config.height, this.obstacleSprite, 0, this.currentSpeed, this.obstacles[this.obstacles.length-1].scaleY, this.columnWidth);
+        let obstacle = new Obstacle(this, game.config.width + 20, game.config.height, this.obstacleSprite, 0, this.currentSpeed, this.obstacles[this.obstacles.length-1].scaleY, this.columnWidth);
         this.obstacles.push(obstacle);
         this.physics.add.collider(this.player, obstacle);
     }
@@ -178,13 +209,14 @@ class Play extends Phaser.Scene {
 
     gameOver(){
         this.gameEnded = true;
-        let idx;
-        for (idx = 1; idx < this.obstacles.length; idx++){
-            console.log(idx);
-            console.log(this.obstacles);
-            console.log(this.obstacles[idx]);
-            this.obstacles[idx].setSpeed(0);
-        }
+        this.music.pause();
+        // let idx;
+        // for (idx = 1; idx < this.obstacles.length; idx++){
+        //     console.log(idx);
+        //     console.log(this.obstacles);
+        //     console.log(this.obstacles[idx]);
+        //     this.obstacles[idx].setSpeed(0);
+        // }
     }
 
     restart(){
@@ -200,7 +232,7 @@ class Play extends Phaser.Scene {
         this.back4.tilePositionX += this.scrollSpeeds[3]*delta;
         this.back5.tilePositionX += this.scrollSpeeds[4]*delta;
         this.back6.tilePositionX += this.scrollSpeeds[5]*delta;
-        this.back7.tilePositionX += this.scrollSpeeds[6]*delta;
+        // this.back7.tilePositionX += this.scrollSpeeds[6]*delta;
     }
 
     
