@@ -31,3 +31,11 @@ function loadFont(name, url) {
         return error;
     });
 }
+
+function enterButtonHoverState(button) {
+    button.setStyle({ color: '#525e4a'});
+  }
+
+function enterButtonRestState(button) {
+    button.setStyle({ color: '#faf5c8' });
+}

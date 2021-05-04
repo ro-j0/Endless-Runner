@@ -5,21 +5,7 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
-        // Load sprites
-        this.load.image('obstacle1', './assets/pillar1.png');
-        this.load.image('obstacle2', './assets/pillar2.png');
-        this.load.image('obstacle3', './assets/pillar3.png');
-        this.load.image('backLayer1', './assets/hill2.png');
-        this.load.image('backLayer2', './assets/hill1.png');
-        this.load.image('backLayer3', './assets/tree4.png');
-        this.load.image('backLayer4', './assets/tree3.png');
-        this.load.image('backLayer5', './assets/tree2.png');
-        this.load.image('backLayer6', './assets/tree1.png');
-        this.load.image('backLayer7', './assets/cloudsandmountains.png');
         
-        this.load.atlas('spriteSheet', './assets/spritesheet.png', 'assets/spritesheet.json');
-
-        this.load.audio("music", ["./assets/sounds/music.wav"]);
     }
 
     create() {
@@ -27,6 +13,9 @@ class Play extends Phaser.Scene {
         this.back7 = this.add.tileSprite(game.config.width/2, game.config.height-500, this.textures.get('backLayer7').width*3, this.textures.get('backLayer7').height, 'backLayer7').setOrigin(0.5, 0);
         this.back7.scaleX = 1.3;
         this.back7.scaleY = 1.3;
+        this.sun = this.add.image(game.config.width/2-40, 140, 'sun').setOrigin(0.5, 0.5);
+        this.sun.scaleX = 2;
+        this.sun.scaleY = 2;
         this.back6 = this.add.tileSprite(0, game.config.height-180, this.textures.get('backLayer6').width, this.textures.get('backLayer6').height, 'backLayer6').setOrigin(0, 1);
         this.back5 = this.add.tileSprite(0, game.config.height-210, this.textures.get('backLayer5').width, this.textures.get('backLayer5').height, 'backLayer5').setOrigin(0, 1);
         this.back4 = this.add.tileSprite(0, game.config.height-120, this.textures.get('backLayer4').width, this.textures.get('backLayer4').height, 'backLayer4').setOrigin(0, 1);
@@ -35,12 +24,20 @@ class Play extends Phaser.Scene {
         this.back1 = this.add.tileSprite(0, game.config.height, this.textures.get('backLayer1').width, this.textures.get('backLayer1').height, 'backLayer1').setOrigin(0, 1);
         this.back1.scaleX = 1.3;
         this.back1.scaleY = 1.3;
+        
 
         // Set sound variables
         if (!this.music){
             this.music = this.sound.add("music", {loop: true});
-            this.music.play();
+            this.jumpSound = this.sound.add("jump", {loop: false});
+            this.startSound = this.sound.add("bock", {loop: false});
         }
+
+        // Play background music on loop
+        this.music.play();
+
+        // Play a hearty chicken noise to kick things off 
+        this.startSound.play();
 
         // Setting scroll speeds for various parallax scrolling elements
         this.scrollSpeeds = [0.1, 0.08, 0.07, 0.05, 0.03, 0.01];
@@ -106,9 +103,9 @@ class Play extends Phaser.Scene {
         console.log(this.obstacles);
 
         // Create Score UI
-        let scoreConfig = {
+        this.scoreConfig = {
             fontFamily: 'chuck',
-            fontSize: '56px',
+            fontSize: '78px',
             color: '#faf5c8',
             align: 'right',
             padding: {
@@ -118,7 +115,7 @@ class Play extends Phaser.Scene {
         }
         
         // Add UI Element to the screen
-        this.scoreLeft = this.add.text(20 , 20, this.score, scoreConfig);
+        this.scoreLeft = this.add.text(40 , 20, this.score, this.scoreConfig).setOrigin(0, 0);
     }
 
     update(speed, delta) {
@@ -161,7 +158,7 @@ class Play extends Phaser.Scene {
 
         // Check if the player is dead
         if (this.player.x <= 0 || this.player.y >= game.config.height + this.player.height){
-            this.restart();
+            this.gameOver();
         }
     }
 
@@ -210,13 +207,35 @@ class Play extends Phaser.Scene {
     gameOver(){
         this.gameEnded = true;
         this.music.pause();
-        // let idx;
-        // for (idx = 1; idx < this.obstacles.length; idx++){
-        //     console.log(idx);
-        //     console.log(this.obstacles);
-        //     console.log(this.obstacles[idx]);
-        //     this.obstacles[idx].setSpeed(0);
-        // }
+        this.endScreen = this.add.image(game.config.width/2, game.config.height/2, 'deathScreen').setOrigin(0.5, 0.5);
+        this.endScreen.scaleX = 0.7;
+        this.endScreen.scaleY = 0.7;
+        this.endScoreConfig = {
+            fontFamily: 'chuck',
+            fontSize: '102px',
+            color: '#faf5c8',
+            align: 'right',
+            padding: {
+            top: 5,
+            bottom: 5,
+            }
+        }
+        this.endScore = this.add.text(265 , 80, Math.round(this.score/100)/10, this.endScoreConfig).setOrigin(0.5, 0);
+        this.seconds = this.add.text(265 , 180, "seconds", this.endScoreConfig).setOrigin(0.5, 0);
+        this.seconds.setFontSize(50);
+
+        this.retry = this.add.text(265 , 350, "RETRY", this.endScoreConfig).setOrigin(0.5, 0);
+        this.retry.setFontSize(72);
+        this.retry.setInteractive();
+        this.retry.on('pointerover', () => { enterButtonHoverState(this.retry); });
+        this.retry.on('pointerout', () => { enterButtonRestState(this.retry); });
+        this.retry.on('pointerdown', () => { this.restart(); });
+        this.exit = this.add.text(265 , 420, "MENU", this.endScoreConfig).setOrigin(0.5, 0);
+        this.exit.setFontSize(72);
+        this.exit.setInteractive();
+        this.exit.on('pointerover', () => { enterButtonHoverState(this.exit); });
+        this.exit.on('pointerout', () => { enterButtonRestState(this.exit); });
+        this.exit.on('pointerdown', () => { this.scene.start("menuScene"); });
     }
 
     restart(){

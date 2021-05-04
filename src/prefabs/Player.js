@@ -78,6 +78,8 @@ class Player extends Phaser.GameObjects.Sprite {
     Jump(){
         this.indicateJump();
         this.anims.play('hopping');
+
+        this.scene.jumpSound.play();
         this.clock = this.scene.time.delayedCall(this.SQUISH_DURATION-1, () => {
             this.body.setVelocityY(-this.jumpHeight);   // jump up
             this.anims.play('flying');
