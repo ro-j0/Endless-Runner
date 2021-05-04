@@ -1,4 +1,21 @@
-// Configure the specs for the game canvas
+// Hen Hop
+// An Endless Runner made by:
+// Stryker Buffington, Lauren Nakamura, and Rohan Jhangiani
+// Version 1.0 Completed: May 3rd
+
+// Creative Tilt Justification
+
+// Some interesting technical aspects of our game include:
+//      - Tweening player scale when they collide with the ground
+//      - Collision Detection with top of obstacles, not the sides
+//      - Delayed call to an Automatic Jump function when player touches the ground
+
+// Hen Hop's Visual Style was 100% original artwork, and we are all very 
+// proud of how it turned out visually, from the 6 layers of parallax 
+// backgrounds to the intricate pixel art and player animations. The music
+// was also originally composed.
+
+
 
 let config = {
     type: Phaser.WEBGL,
@@ -14,13 +31,9 @@ let config = {
     },
     scene: [Menu, Credits, Play],
 }
-
-// Configure the game to the specs 
-
 let game = new Phaser.Game(config);
 
 // reserve key bindings
-
 let keyLEFT, keyRIGHT;
 
 function loadFont(name, url) {

@@ -21,7 +21,7 @@ class Menu extends Phaser.Scene {
         this.load.image('backLayer6', './assets/tree1.png');
         this.load.image('backLayer7', './assets/cloudsandmountains.png');
         this.load.image('sun', './assets/sun.png');
-        this.load.image('background', './assets/menuTitle.png');
+        this.load.image('background', './assets/Menutitle.png');
         this.load.image('deathScreen', './assets/Endscreen.png');
         
         // Load spritesheet with player animations
@@ -33,9 +33,7 @@ class Menu extends Phaser.Scene {
         this.load.audio("bock", ["./assets/sounds/chickenSound.mp3"]);
         
         // Call function that loads game font
-        loadFont("chuck", "assets/fonts/Chuck_W01_Regular.ttf");
-
-        console.log(this.textures);
+        loadFont("chuck", "./assets/fonts/Chuck_W01_Regular.ttf");
     }
 
     create(){

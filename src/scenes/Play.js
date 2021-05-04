@@ -100,8 +100,6 @@ class Play extends Phaser.Scene {
             this.physics.add.collider(this.player, obstacle);
         }
 
-        console.log(this.obstacles);
-
         // Create Score UI
         this.scoreConfig = {
             fontFamily: 'chuck',
