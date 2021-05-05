@@ -24,15 +24,16 @@ class Play extends Phaser.Scene {
         this.back1 = this.add.tileSprite(0, game.config.height, this.textures.get('backLayer1').width, this.textures.get('backLayer1').height, 'backLayer1').setOrigin(0, 1);
         this.back1.scaleX = 1.3;
         this.back1.scaleY = 1.3;
-        
 
-        // Set sound variables
         if (!this.music){
-            this.music = this.sound.add("music", {loop: true});
-            this.jumpSound = this.sound.add("jump", {loop: false});
-            this.startSound = this.sound.add("bock", {loop: false});
+            this.music = this.sound.add("music", {loop: true, volume: 0.5});
+            this.deathMusic = this.sound.add("deathBackgroundSound", {loop: true, volume: 0.5});
+            this.jumpSound = this.sound.add("jump", {loop: false, volume: 0.7});
+            this.deathSound = this.sound.add("deathSound", {loop: false, volume: 0.7});
+            this.UISound = this.sound.add("UISound", {loop: false, volume: 0.7});
+            this.startSound = this.sound.add("startSound", {loop: false});
         }
-
+        
         // Play background music on loop
         this.music.play();
 
@@ -205,6 +206,8 @@ class Play extends Phaser.Scene {
     gameOver(){
         this.gameEnded = true;
         this.music.pause();
+        this.deathSound.play();
+        this.deathMusic.play();
         this.endScreen = this.add.image(game.config.width/2, game.config.height/2, 'deathScreen').setOrigin(0.5, 0.5);
         this.endScreen.scaleX = 0.7;
         this.endScreen.scaleY = 0.7;
@@ -227,13 +230,20 @@ class Play extends Phaser.Scene {
         this.retry.setInteractive();
         this.retry.on('pointerover', () => { enterButtonHoverState(this.retry); });
         this.retry.on('pointerout', () => { enterButtonRestState(this.retry); });
-        this.retry.on('pointerdown', () => { this.restart(); });
+        this.retry.on('pointerdown', () => { 
+            this.deathMusic.pause();
+            this.restart(); 
+        });
         this.exit = this.add.text(265 , 420, "MENU", this.endScoreConfig).setOrigin(0.5, 0);
         this.exit.setFontSize(72);
         this.exit.setInteractive();
         this.exit.on('pointerover', () => { enterButtonHoverState(this.exit); });
         this.exit.on('pointerout', () => { enterButtonRestState(this.exit); });
-        this.exit.on('pointerdown', () => { this.scene.start("menuScene"); });
+        this.exit.on('pointerdown', () => { 
+            this.UISound.play();
+            this.deathMusic.pause();
+            this.scene.start("menuScene"); 
+        });
     }
 
     restart(){

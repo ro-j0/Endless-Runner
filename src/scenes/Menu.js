@@ -9,6 +9,45 @@ class Menu extends Phaser.Scene {
         if (this.background){
             return;
         }
+
+        var progressBar = this.add.graphics();
+        var progressBox = this.add.graphics();
+        progressBar.x = 240;
+        progressBox.x = 240;
+        progressBar.y = 80;
+        progressBox.y = 80;
+        progressBox.fillStyle(0x222222, 0.8);
+        progressBox.fillRect(240, 270, 320, 50);
+
+        var width = game.config.width;
+        var height = game.config.height;
+        var loadingText = this.make.text({
+            x: width / 2,
+            y: height / 2 - 50,
+            text: 'Loading...',
+            style: {
+                font: '20px monospace',
+                fill: '#ffffff'
+            }
+        });
+        loadingText.setOrigin(0.5, 0.5);
+
+        
+        this.load.on('progress', function (value) {
+            progressBar.clear();
+            progressBar.fillStyle(0xffffff, 1);
+            progressBar.fillRect(250, 280, 300 * value, 30);
+        });
+
+        this.load.on('complete', function () {
+            progressBar.destroy();
+            progressBox.destroy();
+            loadingText.destroy();
+        });
+
+        // Call function that loads game font
+        loadFont("chuck", "./assets/fonts/Chuck_W01_Regular.ttf");
+
         // Load Images
         this.load.image('obstacle1', './assets/pillar1.png');
         this.load.image('obstacle2', './assets/pillar2.png');
@@ -23,6 +62,8 @@ class Menu extends Phaser.Scene {
         this.load.image('sun', './assets/sun.png');
         this.load.image('background', './assets/Menutitle.png');
         this.load.image('deathScreen', './assets/Endscreen.png');
+        this.load.image('tutorialScreen', './assets/tutorialscreen.png');
+        this.load.image('creditsBackground', './assets/creditsBG.png');
         
         // Load spritesheet with player animations
         this.load.atlas('spriteSheet', './assets/spritesheet.png', 'assets/spritesheet.json');
@@ -30,18 +71,26 @@ class Menu extends Phaser.Scene {
         // Load Audio Files
         this.load.audio("music", ["./assets/sounds/music.wav"]);
         this.load.audio("jump", ["./assets/sounds/jumpSound.wav"]);
-        this.load.audio("bock", ["./assets/sounds/chickenSound.mp3"]);
+        this.load.audio("startSound", ["./assets/sounds/cluck1.mp3"]);
+        this.load.audio("deathSound", ["./assets/sounds/squeak.mp3"]);
+        this.load.audio("UISound", ["./assets/sounds/cluck2.mp3"]);
+        this.load.audio("deathBackgroundSound", ["./assets/sounds/frying.mp3"]);
         
-        // Call function that loads game font
-        loadFont("chuck", "./assets/fonts/Chuck_W01_Regular.ttf");
     }
 
     create(){
+        
+        // Render background Image
         this.background = this.add.image(game.config.width/2, game.config.height/2, 'background').setOrigin(0.5, 0.5);
         this.background.scaleX = 0.7;
         this.background.scaleY = 0.7;
 
-        // Create Score UI
+        // Set sound variables
+        if (!this.UISound){
+            this.UISound = this.sound.add("UISound", {loop: false, volume: 0.5});
+        }
+
+        // Config for Play Button
         let PLAYConfig = {
             fontFamily: 'chuck',
             fontSize: '56px',
@@ -53,7 +102,7 @@ class Menu extends Phaser.Scene {
             }
         }
 
-        // Create Score UI
+        // Config for other buttons
         let CREDITSConfig = {
             fontFamily: 'chuck',
             fontSize: '40px',
@@ -70,14 +119,29 @@ class Menu extends Phaser.Scene {
         this.play.setInteractive();
         this.play.on('pointerover', () => { enterButtonHoverState(this.play); });
         this.play.on('pointerout', () => { enterButtonRestState(this.play); });
-        this.play.on('pointerdown', () => { this.scene.start("playScene"); });
+        this.play.on('pointerdown', () => { 
+            this.scene.start("playScene"); 
+        });
 
         // Add Credits Button to the Screen
-        this.credits = this.add.text(game.config.width/2 , 3*game.config.height/4 +50, "CREDITS", CREDITSConfig).setOrigin(0.5, 0.5);
+        this.tutorial = this.add.text(game.config.width/2 , 3*game.config.height/4 + 60, "TUTORIAL", CREDITSConfig).setOrigin(0.5, 0.5);
+        this.tutorial.setInteractive();
+        this.tutorial.on('pointerover', () => { enterButtonHoverState(this.tutorial); });
+        this.tutorial.on('pointerout', () => { enterButtonRestState(this.tutorial); });
+        this.tutorial.on('pointerdown', () => { 
+            this.UISound.play();
+            this.scene.start("tutorialScene"); 
+        });
+
+        // Add Credits Button to the Screen
+        this.credits = this.add.text(game.config.width/2 , 3*game.config.height/4 +110, "CREDITS", CREDITSConfig).setOrigin(0.5, 0.5);
         this.credits.setInteractive();
         this.credits.on('pointerover', () => { enterButtonHoverState(this.credits); });
         this.credits.on('pointerout', () => { enterButtonRestState(this.credits); });
-        this.credits.on('pointerdown', () => { this.scene.start("creditsScene"); });
+        this.credits.on('pointerdown', () => { 
+            this.UISound.play();
+            this.scene.start("creditsScene"); 
+        });
         
     }
 
