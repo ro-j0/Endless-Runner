@@ -107,7 +107,7 @@ class Menu extends Phaser.Scene {
             fontFamily: 'chuck',
             fontSize: '40px',
             color: '#faf5c8',
-            align: 'right',
+            align: 'center',
             padding: {
             top: 5,
             bottom: 5,
@@ -115,7 +115,7 @@ class Menu extends Phaser.Scene {
         }
         
         // Add Play Button to the Screen
-        this.play = this.add.text(game.config.width/2 , 3*game.config.height/4, "PLAY", PLAYConfig).setOrigin(0.5, 0.5);
+        this.play = this.add.text(game.config.width/2 , 3*game.config.height/4, "PLAY", CREDITSConfig).setOrigin(0.5, 0.5);
         this.play.setInteractive();
         this.play.on('pointerover', () => { enterButtonHoverState(this.play); });
         this.play.on('pointerout', () => { enterButtonRestState(this.play); });
@@ -124,7 +124,7 @@ class Menu extends Phaser.Scene {
         });
 
         // Add Credits Button to the Screen
-        this.tutorial = this.add.text(game.config.width/2 , 3*game.config.height/4 + 60, "TUTORIAL", CREDITSConfig).setOrigin(0.5, 0.5);
+        this.tutorial = this.add.text(game.config.width/3 , 3*game.config.height/4, "TUTORIAL", CREDITSConfig).setOrigin(0.5, 0.5);
         this.tutorial.setInteractive();
         this.tutorial.on('pointerover', () => { enterButtonHoverState(this.tutorial); });
         this.tutorial.on('pointerout', () => { enterButtonRestState(this.tutorial); });
@@ -134,15 +134,14 @@ class Menu extends Phaser.Scene {
         });
 
         // Add Credits Button to the Screen
-        this.credits = this.add.text(game.config.width/2 , 3*game.config.height/4 +110, "CREDITS", CREDITSConfig).setOrigin(0.5, 0.5);
+        this.credits = this.add.text((2 * game.config.width)/3 -20, 3*game.config.height/4, "CREDITS", CREDITSConfig).setOrigin(0.5, 0.5);
         this.credits.setInteractive();
         this.credits.on('pointerover', () => { enterButtonHoverState(this.credits); });
         this.credits.on('pointerout', () => { enterButtonRestState(this.credits); });
         this.credits.on('pointerdown', () => { 
             this.UISound.play();
-            this.scene.start("creditsScene"); 
+            this.scene.start("creditsScene");
         });
-        
     }
 
     
