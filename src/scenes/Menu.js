@@ -49,9 +49,9 @@ class Menu extends Phaser.Scene {
         loadFont("chuck", "./assets/fonts/Chuck_W01_Regular.ttf");
 
         // Load Images
-        this.load.image('obstacle1', './assets/pillar1.png');
-        this.load.image('obstacle2', './assets/pillar2.png');
-        this.load.image('obstacle3', './assets/pillar3.png');
+        this.load.image('obstacle1', './assets/pillarL1.png');
+        this.load.image('obstacle2', './assets/pillarL2.png');
+        this.load.image('obstacle3', './assets/pillarL3.png');
         this.load.image('backLayer1', './assets/hill2.png');
         this.load.image('backLayer2', './assets/hill1.png');
         this.load.image('backLayer3', './assets/tree4.png');

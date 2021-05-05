@@ -8,6 +8,11 @@ class Obstacle extends Phaser.GameObjects.Sprite  {
         // enable physics
         scene.physics.add.existing(this);
 
+
+        // Default height: 640
+        // Height step increse: 26 pixels
+        // Height step decrease: 52 pixels
+
         this.body.velocity.x = -speed;
 
         this.body.immovable = true;
@@ -16,7 +21,7 @@ class Obstacle extends Phaser.GameObjects.Sprite  {
         // Set up transforms so that the base is touching the ground, and scaling
         // Y does not affect location of the base
         this.y = game.config.height;
-        this.setOrigin(0, 1);
+        this.setOrigin(0, 0);
 
         this.scaleX = scaleWidth;
 

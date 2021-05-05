@@ -77,6 +77,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
     Jump(){
         this.indicateJump();
+        console.log("height: " + this.y);
         this.anims.play('hopping');
 
         this.scene.jumpSound.play();

@@ -96,7 +96,7 @@ class Play extends Phaser.Scene {
         let ob_idx;
         for (ob_idx = 0; ob_idx < 20; ob_idx++){
             // {72 * ob_idx} is hard coded; should be {obstacle.width * 3 * ob_idx}
-            let obstacle = new Obstacle(this, game.config.width/2 + 72*(9-ob_idx), game.config.height, this.obstacleSprite, 0, this.currentSpeed, 0, 3);
+            let obstacle = new Obstacle(this, game.config.width/2 + 72*(9-ob_idx), 640, this.obstacleSprite, 0, this.currentSpeed, 0, 3);
             this.obstacles.push(obstacle);
             this.physics.add.collider(this.player, obstacle);
         }
