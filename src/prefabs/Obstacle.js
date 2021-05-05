@@ -26,8 +26,6 @@ class Obstacle extends Phaser.GameObjects.Sprite  {
         this.scaleX = scaleWidth;
         this.scaleY = 1.5;
 
-        console.log(this.y);
-
         // Handle first obstacle spawn: always the same height
         if (prevHeight == 0){
             this.y = 640;

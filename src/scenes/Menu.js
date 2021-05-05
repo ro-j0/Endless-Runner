@@ -63,7 +63,7 @@ class Menu extends Phaser.Scene {
         this.load.image('background', './assets/Menutitle.png');
         this.load.image('deathScreen', './assets/Endscreen.png');
         this.load.image('tutorialScreen', './assets/tutorialscreen.png');
-        this.load.image('creditsBackground', './assets/creditsBG.png');
+        this.load.image('creditsBackground', './assets/credits.png');
         
         // Load spritesheet with player animations
         this.load.atlas('spriteSheet', './assets/spritesheet.png', 'assets/spritesheet.json');
