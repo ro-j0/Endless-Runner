@@ -171,7 +171,7 @@ class Play extends Phaser.Scene {
 
     // Adds obstacle to the game - collides with player, reachable via the obstacles[] array
     spawnObstacle(){
-        let obstacle = new Obstacle(this, game.config.width + 20, game.config.height, this.obstacleSprite, 0, this.currentSpeed, this.obstacles[this.obstacles.length-1].scaleY, this.columnWidth);
+        let obstacle = new Obstacle(this, game.config.width + 20, game.config.height, this.obstacleSprite, 0, this.currentSpeed, this.obstacles[this.obstacles.length-1].y, this.columnWidth);
         this.obstacles.push(obstacle);
         this.physics.add.collider(this.player, obstacle);
     }
