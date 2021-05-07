@@ -64,9 +64,13 @@ class Menu extends Phaser.Scene {
         this.load.image('deathScreen', './assets/Endscreen.png');
         this.load.image('tutorialScreen', './assets/tutorialscreen.png');
         this.load.image('creditsBackground', './assets/credits.png');
+        this.load.image('nightmareBackground', './assets/nmbg.png');
+        this.load.image('nightmareSun', './assets/nmsun.png');
+        this.load.image('obstacle4', './assets/pillarL4.png');
         
         // Load spritesheet with player animations
-        this.load.atlas('spriteSheet', './assets/spritesheet.png', 'assets/spritesheet.json');
+        this.load.atlas('spriteSheet', './assets/spritesheet.png', './assets/spritesheet.json');
+        this.load.atlas('glitchSheet', './assets/glitchSheet.png', './assets/glitch.json');
 
         // Load Audio Files
         this.load.audio("music", ["./assets/sounds/music.wav"]);
@@ -75,6 +79,7 @@ class Menu extends Phaser.Scene {
         this.load.audio("deathSound", ["./assets/sounds/squeak.mp3"]);
         this.load.audio("UISound", ["./assets/sounds/cluck2.mp3"]);
         this.load.audio("deathBackgroundSound", ["./assets/sounds/frying.mp3"]);
+        this.load.audio("nmmusic", ["./assets/sounds/night.wav"]);
         
     }
 

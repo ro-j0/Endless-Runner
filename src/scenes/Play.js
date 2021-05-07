@@ -33,6 +33,9 @@ class Play extends Phaser.Scene {
             this.UISound = this.sound.add("UISound", {loop: false, volume: 0.7});
             this.startSound = this.sound.add("startSound", {loop: false});
         }
+
+        // Create camera object
+        this.camera = this.cameras.add(0, 0, 1280, 700);
         
         // Play background music on loop
         this.music.play();
@@ -89,8 +92,11 @@ class Play extends Phaser.Scene {
         // MEDIUM (0:30-0:59): speed: 200, rate = 1000, width = 2
         this.MEDIUM_THRESHOLD = 30000;
 
-        // HARD (1:00-INF): speed = 250, rate = 600, width = 1.2
+        // HARD (1:00-1:30): speed = 250, rate = 600, width = 1.2
         this.HARD_THRESHOLD = 60000;
+
+        // GLITCH (1:30-INF): speed = 250, rate = 600, width = 1.2
+        this.GLITCH_THRESHOLD = 90000;
 
         // Create the first obstacles, that form a forgiving platform
         let ob_idx;
@@ -115,6 +121,7 @@ class Play extends Phaser.Scene {
         
         // Add UI Element to the screen
         this.scoreLeft = this.add.text(40 , 20, this.score, this.scoreConfig).setOrigin(0, 0);
+
     }
 
     update(speed, delta) {
@@ -185,10 +192,13 @@ class Play extends Phaser.Scene {
     // changes pillar spawn speed, velocity, and width based on score
     increaseDifficulty(){
         // Bounce back quickly if difficulty is maxed
-        if (this.difficulty == 2){
+        if (this.difficulty == 3){
             return;
         }
-        if (this.score >= this.HARD_THRESHOLD && this.difficulty < 2){
+        if (this.score >= this.GLITCH_THRESHOLD && this.difficulty < 3){
+            this.difficulty = 3;
+            this.glitch();
+        } else if (this.score >= this.HARD_THRESHOLD && this.difficulty < 2){
             this.difficulty = 2;
             this.currentSpeed = 250;
             this.SPAWN_RATE = 600;
@@ -203,9 +213,63 @@ class Play extends Phaser.Scene {
         }
     }
 
+    glitch(){
+        this.music.pause();
+        this.music = this.sound.add("nmmusic", {loop: true, volume: 0.5});
+        this.camera.setBackgroundColor('rgba(55,47,84, 1)');
+
+        this.currentSpeed = 300;
+        this.SPAWN_RATE = 600;
+        this.columnWidth = 1;
+        this.obstacleSprite = "obstacle4";
+
+        // Remove previous Assets
+        this.sun.destroy();
+        this.back7.destroy();
+        this.back6.destroy();
+        this.back5.destroy();
+        this.back4.destroy();
+        this.back3.destroy();
+        this.back2.destroy();
+        this.back1.destroy();
+
+        
+        // Create Glitch Assets
+        this.nmback = this.add.tileSprite(0, game.config.height, this.textures.get('nightmareBackground').width, this.textures.get('nightmareBackground').height, 'nightmareBackground').setOrigin(0, 1);
+        this.nmback.scaleX = 1.5;
+        this.nmback.scaleY = 1.5;
+        this.nmback.setDepth(-3);
+        this.player.setDepth(1);
+        
+        
+        this.glitchAnim = this.add.sprite(game.config.width/2, game.config.height/2, 'glitchSheet').setOrigin(0.5, 0.5);
+        this.glitchAnim.scaleX = 3.2;
+        this.glitchAnim.scaleY = 3.2;
+        this.glitchAnim.setDepth(-1);
+        this.glitchAnim.anims.create({
+            key: 'glitch', 
+            repeat: 0,
+            frames: this.anims.generateFrameNames('glitchSheet', {
+                prefix: 'sprite',
+                start: 5,
+                end: 33,
+            }),
+            framerate: 30
+        });
+        this.glitchAnim.anims.play('glitch');
+        this.clock = this.time.delayedCall(1300, () => {
+            this.glitchAnim.destroy();
+            this.music.play();
+            this.sun = this.add.image(game.config.width/2-40, 140, 'nightmareSun').setOrigin(0.5, 0.5);
+            this.sun.scaleX = 2;
+            this.sun.scaleY = 2;
+        }, null, this);
+    }
+
     gameOver(){
         this.gameEnded = true;
         this.music.pause();
+        this.music = this.sound.add("music", {loop: true, volume: 0.5});
         this.deathSound.play();
         this.deathMusic.play();
         this.endScreen = this.add.image(game.config.width/2, game.config.height/2, 'deathScreen').setOrigin(0.5, 0.5);
@@ -253,6 +317,10 @@ class Play extends Phaser.Scene {
     }
 
     ScrollBackground(delta){
+        if (this.difficulty == 3){
+            this.nmback.tilePositionX -= 0.2*delta;
+            return;
+        }
         this.back1.tilePositionX += this.scrollSpeeds[0]*delta;
         this.back2.tilePositionX += this.scrollSpeeds[1]*delta;
         this.back3.tilePositionX += this.scrollSpeeds[2]*delta;
